@@ -30,24 +30,78 @@ app.get('/', function(req, res) {
     })
 });
 
-app.get('/update/:id',function(req, res) {
+app.get('/update/:id', function(req, res) {
   let id = req.params.id;
-  snippet.deleteOne({
+  snippet.findOne({
       _id: new ObjectId(id)
     })
-    .then(function(index) {
-      res.render('update',  {newCodeSnippet: index})
+    .then(function(update) {
+      res.render('update', {
+      updateCodeSnippet: update
+      })
     })
-    .catch(function(error, index) {
+    .catch(function(error) {
       console.log('error ' + JSON.stringify(error));
       res.redirect('/')
     })
 })
+app.post("/searchlanguage", function(req, res) {
+  let searchlanguage = req.body.searchlanguage;
+  console.log(req.body.searchlanguage);
+  snippet.find({
+    language: searchlanguage
+  }).then(function(snippets) {
+    res.render('searchlanguage', {
+      snippets: snippets
+    });
+  })
+  .catch(function(error) {
+    console.log('error ' + JSON.stringify(error));
+    res.redirect('/')
+  })
+})
+  app.post("/searchtags", function(req, res) {
+    let searchtags = req.body.searchtags;
+    snippet.find({
+      tags: searchtags
+    }).then(function(snippets) {
+      res.render('searchtags', {
+        snippets: snippets
+      });
+      console.log(snippet.find);
+    })
+
+});
+app.post('/update/:id', function(req, res) {
+  let id = req.params.id
+  let newCode = req.body.code
+  let newTitle = req.body.title
+  let tags = req.body.tags
+  const newTags = tags.split(' ');
+  let newLanguage = req.body.language
+  let newNotes = req.body.notes
+
+  snippet.updateOne({
+      _id: new ObjectId(id)
+    }, {
+      code: newCode,
+      title: newTitle,
+      notes: newNotes,
+      language: newLanguage,
+      tags: newTags
+    })
+
+    .then(function() {
+      res.redirect('/')
+    })
+});
+
 app.post('/', function(req, res) {
   let newCode = req.body.code
   let newTitle = req.body.title
-  let newTags = req.body.tags
-  let newLanguage =req.body.language
+  let tags = req.body.tags
+  const newTags = tags.split(' ');
+  let newLanguage = req.body.language
   let newNotes = req.body.notes
   const snip = new snippet({
     code: newCode,
@@ -55,10 +109,10 @@ app.post('/', function(req, res) {
     notes: newNotes,
     language: newLanguage,
     tags: newTags
-  });
+  })
 
   snip.save()
-  .then(function(results) {
+    .then(function(results) {
       console.log("saved " + results);
       return snippet.find()
     })

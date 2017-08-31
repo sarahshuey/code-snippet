@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Search By Tags</title>
+  </head>
+  <body>
+    <form class="home" action="/" method="get">
+      <button type="submit" name="Home">Home</button>
+    </form>
+    {{#snippets}}
+    <p> Title: {{title}}</p>
+    <p> Code: {{code}}</p>
+    <p> Notes: {{notes}}</p>
+    <p> Language: {{language}}</p>
+    <p> Tags: {{tags}}</p>
+    <br>
+    {{/snippets}}
+    {{^snippets}}
+    No Snippets With That Tag
+    {{/snippets}}
+  </body>
+</html>

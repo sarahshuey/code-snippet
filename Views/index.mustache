@@ -1,29 +1,59 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <title>Code Snippet</title>
-  </head>
-  <body>
-<form class="add" action="/" method="post">
-<input type="text" name="title" placeholder="Title">
-<input type="textarea" name="code" placeholder="write your code here">
-<input type="textarea" name="notes" placeholder="Your notes here">
-<input type="dropdown" name="language" placeholder="language used">
-<input type="textarea" name="tags" placeholder="tags">
-<input type="submit" name="button" placeholder="Save">
-</form>
-<ul>
-  {{#newCodeSnippet}}
-  <form class="" action="/delete/{{id}}" method="post">
-    <button type="submit" name="delete">Delete</button>
+
+<head>
+  <meta charset="utf-8">
+  <title>Code Snippet</title>
+</head>
+
+<body>
+  <form class="add" action="/" method="post">
+    <input type="text" name="title" placeholder="Title">
+    <br>
+    <textarea name="code" rows="8" cols="80"placeholder="Write Your Code Here"></textarea>
+    <br>
+<textarea name="notes" rows="8" cols="80" placeholder="Your Notes Here"></textarea>
+<br>
+<select name="language">
+<option value="javascript">javascript</option>
+<option value="java">java</option>
+<option value="ruby">ruby</option>
+<option value="html">html</option>
+<option value="css">css</option>
+</select>
+<br>
+    <input type="text" name="tags" placeholder="tags">
+    <br>
+    <input type="submit" name="button" value="Save">
+    <br>
   </form>
-  <p>Title: <a href="/update/{{id}}">{{title}}</a> </p>
-  <p>Code: {{code}}</p>
-  <p>Notes: {{notes}}</p>
-  <p>Language: {{language}}</p>
-  <p>Tags: {{tags}}</p>
-  {{/newCodeSnippet}}
-</ul>
-  </body>
+  <ul>
+    {{#newCodeSnippet}}
+      <p>Title: <a href="/update/{{_id}}">{{title}}</a></p>
+      <p>Title: {{title}}</p>
+      <p>Code: {{code}}</p>
+      <p>Notes: {{notes}}</p>
+      <p>Language: {{language}}</p>
+      <p>Tags: {{tags}}</p>
+      <form class="" action="/delete/{{id}}" method="post">
+        <button type="submit" name="delete">Delete</button>
+      </form>
+    {{/newCodeSnippet}}
+  </ul>
+  <form class="searchtags" action="/searchtags" method="post">
+    <input type="text" name="searchtags" placeholder="Search By Tags">
+    <button type="submit" name="button">Search</button>
+  </form>
+  <form class='searchlanguage' action="/searchlanguage" method="post">
+    <select name="searchlanguage">
+       <option value="javascript">javascript</option>
+       <option value="java">java</option>
+       <option value="ruby">ruby</option>
+       <option value="html">html</option>
+       <option value="css">css</option>
+     </select>
+    <button type="submit" name="submit">Search</button>
+  </form>
+</body>
+
 </html>
