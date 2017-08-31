@@ -20,13 +20,72 @@ app.get('/', function(req, res) {
   snippet.find()
     .then(function(index) {
       console.log(index);
-      res.render('index')
-      // res.render('index', {
-      //   newcode: index
-      // })
+      res.render('index', {
+        newCodeSnippet: index
+      })
     })
     .catch(function(error) {
+      console.log('error ' + JSON.stringify(error))
+      res.redirect('/');
+    })
+});
+
+app.get('/update/:id',function(req, res) {
+  let id = req.params.id;
+  snippet.deleteOne({
+      _id: new ObjectId(id)
+    })
+    .then(function(index) {
+      res.render('update',  {newCodeSnippet: index})
+    })
+    .catch(function(error, index) {
       console.log('error ' + JSON.stringify(error));
+      res.redirect('/')
+    })
+})
+app.post('/', function(req, res) {
+  let newCode = req.body.code
+  let newTitle = req.body.title
+  let newTags = req.body.tags
+  let newLanguage =req.body.language
+  let newNotes = req.body.notes
+  const snip = new snippet({
+    code: newCode,
+    title: newTitle,
+    notes: newNotes,
+    language: newLanguage,
+    tags: newTags
+  });
+
+  snip.save()
+  .then(function(results) {
+      console.log("saved " + results);
+      return snippet.find()
+    })
+    .then(function(snips) {
+      console.log(snips);
+      res.render('index', {
+        newCodeSnippet: snips
+      })
+    })
+    .catch(function(error, index) {
+      console.log('catch from snip save');
+      console.log('error ' + JSON.stringify(error));
+      res.redirect('/')
+    })
+});
+
+app.post('/delete/:id', function(req, res) {
+  let id = req.params.id;
+  snippet.deleteOne({
+      _id: new ObjectId(id)
+    })
+    .then(function() {
+      res.redirect('/')
+    })
+    .catch(function(error, index) {
+      console.log('error ' + JSON.stringify(error));
+      res.redirect('/')
     })
 });
 

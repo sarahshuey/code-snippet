@@ -5,12 +5,25 @@
     <title>Code Snippet</title>
   </head>
   <body>
-<form class="" action="/" method="post">
+<form class="add" action="/" method="post">
 <input type="text" name="title" placeholder="Title">
 <input type="textarea" name="code" placeholder="write your code here">
 <input type="textarea" name="notes" placeholder="Your notes here">
 <input type="dropdown" name="language" placeholder="language used">
 <input type="textarea" name="tags" placeholder="tags">
+<input type="submit" name="button" placeholder="Save">
 </form>
+<ul>
+  {{#newCodeSnippet}}
+  <form class="" action="/delete/{{id}}" method="post">
+    <button type="submit" name="delete">Delete</button>
+  </form>
+  <p>Title: <a href="/update/{{id}}">{{title}}</a> </p>
+  <p>Code: {{code}}</p>
+  <p>Notes: {{notes}}</p>
+  <p>Language: {{language}}</p>
+  <p>Tags: {{tags}}</p>
+  {{/newCodeSnippet}}
+</ul>
   </body>
 </html>
