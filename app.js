@@ -4,22 +4,50 @@ const bodyParser = require('body-parser')
 const app = express();
 const snippet = require('./models/list.js')
 const mongoose = require('mongoose');
+const session = require('express-session');
 mongoose.Promise = require('bluebird');
 let url = 'mongodb://localhost:27017/list';
 mongoose.connect(url);
 const ObjectId = require('mongodb').ObjectID;
+let data = [{
+  username: "sarah",
+  password: "bear"
+}, {
+  username: "austin",
+  password: "deen"
+}, {
+  username: "ginger",
+  password: "bread"
+}];
 app.engine('mustache', mustacheExpress());
 app.set('views', './views')
 app.set('view engine', 'mustache')
 app.use(bodyParser.urlencoded({
   extended: false
 }))
+app.use(session({
+  secret: 'keyboard cat',
+  resave: false,
+  saveUninitialized: true
+}))
 
+app.use(function(req, res, next) {
+  console.log('in interceptor');
+  if (req.url === '/login') {
+    next()
+  } else if (req.url === '/registration') {
+    next()
+  } else if (!req.session.username) {
+    res.render('login')
+
+  } else {
+    next()
+  }
+})
 app.get('/', function(req, res) {
   console.log('root path hit');
   snippet.find()
     .then(function(index) {
-      console.log(index);
       res.render('index', {
         newCodeSnippet: index
       })
@@ -29,6 +57,50 @@ app.get('/', function(req, res) {
       res.redirect('/');
     })
 });
+app.post('/login', function(req, res) {
+
+  for (var i = 0; i < data.length; i++) {
+    if (req.body.username === data[i].username && req.body.password === data[i].password) {
+      req.session.username = req.body.username
+    }
+  }
+
+  if (req.session.username === req.body.username) {
+    snippet.find().then(function(snippets) {
+      res.render('index', {
+        newCodeSnippet: snippets
+      });
+    })
+  } else {
+    res.render('login', {
+      error: "Incorrect username or password."
+    });
+  }
+
+})
+app.get('/registration', function(req, res) {
+    res.render('registration')
+});
+
+
+app.post('/registration', function(req, res) {
+  if (req.body.registrationpassword === req.body.confirmpassword) {
+  data.push({
+    username: req.body.registrationusername,
+    password: req.body.confirmpassword
+  })
+  req.session.username = req.body.regusername
+  snippet.find()
+    .then(function(snippets) {
+      res.render('index', {
+      newCodeSnippet: snippets
+      });
+    })
+
+} else {
+  res.render('registration',{passerror: "Password does not match."})
+}
+})
 
 app.get('/update/:id', function(req, res) {
   let id = req.params.id;
